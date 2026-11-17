@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffdc00">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Harbour Demo">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Harbour — Banking Demo</title>
+<style>
+:root{--yellow:#ffdc00;--ink:#17191b;--bg:#f3f3ef;--muted:#707579;--line:#e5e5df}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+header{padding:calc(18px + env(safe-area-inset-top)) 18px 14px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:900;letter-spacing:.08em;font-size:14px}.demo{font-size:10px;font-weight:800;letter-spacing:.08em;border:1px solid #777;padding:5px 8px;border-radius:99px}
+main{max-width:620px;margin:auto;padding:0 16px}.greeting{font-size:13px;color:var(--muted)}h1{font-size:25px;margin:4px 0 16px}
+.balance{background:var(--yellow);border-radius:22px;padding:21px;margin-bottom:14px}.eyebrow{font-size:11px;font-weight:850;letter-spacing:.09em}.amount{font-size:35px;font-weight:800;letter-spacing:-1px;margin:13px 0 3px}.sub{font-size:13px}.acctline{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:12px}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0 24px}.action{border:0;background:white;border-radius:15px;padding:15px 5px;font-weight:700;color:var(--ink);font-size:13px}.action span{display:block;font-size:20px;margin-bottom:6px}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 10px}.sectionhead h2{font-size:18px;margin:0}.link{border:0;background:none;color:#4c555b;font-weight:700}
+.card,.transaction{background:#fff;border-radius:17px;padding:14px;margin-bottom:9px}.row{display:flex;align-items:center;gap:12px}.glyph{width:40px;height:40px;border-radius:13px;background:#f0f0eb;display:grid;place-items:center;font-size:18px}.grow{flex:1;min-width:0}.name{font-weight:700;font-size:14px}.detail{font-size:12px;color:var(--muted);margin-top:4px}.money{font-weight:750;font-size:14px;white-space:nowrap}.positive{color:#16834a}
+.transaction{border-radius:0;padding:13px 2px;border-bottom:1px solid var(--line);margin:0}.transaction:last-child{border:0}.panel{background:white;border-radius:17px;padding:14px}
+.notice{text-align:center;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.04em;padding:22px 8px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 8px calc(10px + env(safe-area-inset-bottom));z-index:4}
+nav button{border:0;background:none;color:#73777a;font-size:11px;font-weight:700;padding:5px 12px}nav button.active{color:#17191b}nav b{display:block;font-size:19px;margin-bottom:3px}
+.page{display:none}.page.active{display:block}
+input,select{width:100%;padding:12px;border:1px solid #d9d9d2;border-radius:11px;font:inherit;margin:5px 0 12px;background:white}label{font-size:12px;font-weight:750}.primary,.secondary,.danger{padding:13px 15px;border:0;border-radius:12px;font-weight:800;font-size:14px}.primary{background:var(--yellow);color:var(--ink)}.secondary{background:#eee;color:var(--ink)}.danger{background:#fbe8e8;color:#8a2222}.formcard{background:white;padding:16px;border-radius:17px;margin:12px 0}.formcard h2{margin:2px 0 14px;font-size:18px}.hidden{display:none!important}.small{font-size:12px;color:var(--muted);line-height:1.45}
+</style>
+</head>
+<body>
+<header><div class="brand" id="brandHeader">HARBOUR</div><div class="demo">DEMO ONLY</div></header>
+<main>
+<section id="home" class="page active">
+<div class="greeting">Good afternoon</div><h1 id="greetingName">Alex Morgan</h1>
+<div class="balance">
+<div class="eyebrow" id="balanceLabel">HARBOUR · EVERYDAY</div>
+<div class="amount" id="mainBalance">$4,820.65</div><div class="sub">Available demo balance</div>
+<div class="acctline"><span id="accountNumber">Account •••• 4821</span><button class="link" onclick="showPage('settings')">Edit details</button></div>
+</div>
+<div class="actions">
+<button class="action" onclick="showPage('transfer')"><span>⇄</span>Transfer</button>
+<button class="action" onclick="showPage('transfer')"><span>▦</span>Pay demo</button>
+<button class="action" onclick="showPage('settings')"><span>⚙</span>Edit</button>
+</div>
+<div class="sectionhead"><h2>My accounts</h2><button class="link" onclick="showPage('settings')">Edit balances</button></div>
+<div id="accounts"></div>
+<div class="sectionhead"><h2>Recent transactions</h2><button class="link" onclick="showPage('activity')">View all</button></div>
+<div class="panel" id="recent"></div>
+<div class="notice">FICTIONAL DEMO · NOT COMMBANK · NO REAL ACCOUNTS OR PAYMENTS</div>
+</section>
+<section id="activity" class="page">
+<div class="sectionhead"><h2>Transactions</h2><button class="link" onclick="openAdd()">＋ Add</button></div>
+<div class="panel" id="allTransactions"></div>
+<p class="small">Tap a transaction to edit it. Swipe is not required; use the Edit button.</p>
+</section>
+<section id="transfer" class="page">
+<div class="sectionhead"><h2>Simulated transfer</h2></div>
+<div class="formcard">
+<label>Recipient name</label><input id="recipient" placeholder="Enter a fictional recipient">
+<label>Amount (AUD)</label><input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="0.00">
+<button class="primary" onclick="simulateTransfer()">Simulate transfer</button>
+<p class="small" id="transferMessage">This only changes the sample balance on this device. It does not send money or create proof of payment.</p>
+</div>
+</section>
+<section id="settings" class="page">
+<div class="sectionhead"><h2>Customise demo</h2></div>
+<div class="formcard">
+<label>Fictional bank name</label><input id="bankInput">
+<label>Customer name</label><input id="nameInput">
+<label>Demo account number</label><input id="numberInput">
+<label>Everyday balance (AUD)</label><input id="everydayInput" type="number" step=".01">
+<label>Savings balance (AUD)</label><input id="savingsInput" type="number" step=".01">
+<button class="primary" onclick="saveSettings()">Save changes</button>
+</div>
+<div class="formcard"><h2>Transactions</h2><button class="secondary" onclick="openAdd()">＋ Add sample transaction</button><p class="small">Edit or delete transactions from the Activity tab.</p></div>
+<div class="formcard"><p class="small">Harbour is an independent fictional banking demo. It is not CommBank or affiliated with Commonwealth Bank of Australia. All balances and transactions are sample data.</p><button class="danger" onclick="resetDemo()">Reset demo data</button></div>
+</section>
+<section id="add" class="page">
+<div class="sectionhead"><h2 id="editTitle">Add transaction</h2></div>
+<div class="formcard">
+<label>Description</label><input id="txName" placeholder="e.g. Cafe">
+<label>Details</label><input id="txDetail" placeholder="e.g. Food · Today">
+<label>Amount (AUD)</label><input id="txAmount" type="number" step=".01" placeholder="e.g. 24.50">
+<label>Direction</label><select id="txDirection"><option value="out">Money out</option><option value="in">Money in</option></select>
+<div style="display:flex;gap:8px"><button class="primary" onclick="saveTransaction()">Save transaction</button><button class="danger hidden" id="deleteTx" onclick="deleteTransaction()">Delete</button></div>
+</div>
+</section>
+</main>
+<nav>
+<button class="active" data-page="home" onclick="showPage('home')"><b>⌂</b>Home</button>
+<button data-page="activity" onclick="showPage('activity')"><b>≡</b>Activity</button>
+<button data-page="transfer" onclick="showPage('transfer')"><b>⇄</b>Transfer</button>
+<button data-page="settings" onclick="showPage('settings')"><b>•••</b>More</button>
+</nav>
+<script>
+const defaults={bank:"Harbour",name:"Alex Morgan",number:"•••• 4821",everyday:4820.65,savings:12500,tx:[
+{id:1,name:"Woolworths",detail:"Groceries · Today",amount:-64.80,date:"Today",icon:"🛒"},
+{id:2,name:"Salary",detail:"Payment · Yesterday",amount:1250,date:"Yesterday",icon:"↓"},
+{id:3,name:"Uber",detail:"Transport · 15 Nov",amount:-18.40,date:"15 Nov",icon:"🚗"},
+{id:4,name:"Netflix",detail:"Subscription · 14 Nov",amount:-16.99,date:"14 Nov",icon:"▶"}]};
+let data=load(), editing=null;
+function load(){try{return {...defaults,...JSON.parse(localStorage.getItem("harbourDemo")||"{}")}}catch(e){return {...defaults}}}
+function persist(){localStorage.setItem("harbourDemo",JSON.stringify(data));render()}
+function aud(n){return new Intl.NumberFormat("en-AU",{style:"currency",currency:"AUD"}).format(Number(n)||0)}
+function render(){
+document.getElementById("brandHeader").textContent=data.bank.toUpperCase();
+document.getElementById("greetingName").textContent=data.name;
+document.getElementById("balanceLabel").textContent=data.bank.toUpperCase()+" · EVERYDAY";
+document.getElementById("mainBalance").textContent=aud(data.everyday);
+document.getElementById("accountNumber").textContent="Account "+data.number;
+document.getElementById("accounts").innerHTML=account("Everyday Account","Daily spending · "+data.number,data.everyday,"▣")+account("Rainy Day Saver","Savings account",data.savings,"✧");
+const rows=data.tx.map((t,i)=>txRow(t,i)).join("");
+document.getElementById("recent").innerHTML=rows.slice(0,4*1e5)||'<p class="small">No sample transactions yet.</p>';
+document.getElementById("allTransactions").innerHTML=rows||'<p class="small">No sample transactions yet.</p>';
+["bankInput","nameInput","numberInput","everydayInput","savingsInput"].forEach((id,i)=>document.getElementById(id).value=[data.bank,data.name,data.number,data.everyday,data.savings][i]);
+}
+function account(name,detail,balance,icon){return `<div class="card row"><div class="glyph">${icon}</div><div class="grow"><div class="name">${esc(name)}</div><div class="detail">${esc(detail)}</div></div><div class="money">${aud(balance)}</div></div>`}
+function txRow(t,i){return `<div class="transaction row"><div class="glyph">${t.icon||"•"}</div><div class="grow" onclick="editTransaction(${i})"><div class="name">${esc(t.name)}</div><div class="detail">${esc(t.detail)} · <u>Edit</u></div></div><div class="money ${t.amount>0?"positive":""}">${t.amount<0?"−":"+"}${aud(Math.abs(t.amount))}</div><button class="link" aria-label="Edit" onclick="editTransaction(${i})">✎</button></div>`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));if(id==="home"||id==="activity")render();window.scrollTo(0,0)}
+function saveSettings(){data.bank=document.getElementById("bankInput").value.trim()||"Harbour";data.name=document.getElementById("nameInput").value.trim()||"Demo User";data.number=document.getElementById("numberInput").value.trim();data.everyday=Number(document.getElementById("everydayInput").value)||0;data.savings=Number(document.getElementById("savingsInput").value)||0;persist();alert("Demo settings saved.");showPage("home")}
+function simulateTransfer(){let who=document.getElementById("recipient").value.trim(),amt=Number(document.getElementById("transferAmount").value);let msg=document.getElementById("transferMessage");if(!who||!amt||amt<=0||amt>data.everyday){msg.textContent="Enter a recipient and a positive amount within the demo balance.";return}data.everyday-=amt;persist();msg.textContent="Demo transfer simulated. Sample balance updated; no money was sent.";document.getElementById("recipient").value="";document.getElementById("transferAmount").value=""}
+function openAdd(){editing=null;document.getElementById("editTitle").textContent="Add transaction";document.getElementById("txName").value="";document.getElementById("txDetail").value="Manual demo entry";document.getElementById("txAmount").value="";document.getElementById("txDirection").value="out";document.getElementById("deleteTx").classList.add("hidden");showPage("add")}
+function editTransaction(i){editing=i;let t=data.tx[i];document.getElementById("editTitle").textContent="Edit transaction";document.getElementById("txName").value=t.name;document.getElementById("txDetail").value=t.detail;document.getElementById("txAmount").value=Math.abs(t.amount);document.getElementById("txDirection").value=t.amount<0?"out":"in";document.getElementById("deleteTx").classList.remove("hidden");showPage("add")}
+function saveTransaction(){let name=document.getElementById("txName").value.trim(),amount=Number(document.getElementById("txAmount").value);if(!name||!amount||amount<=0){alert("Enter a description and positive amount.");return}let incoming=document.getElementById("txDirection").value==="in";let t={id:editing===null?Date.now():data.tx[editing].id,name,detail:document.getElementById("txDetail").value,amount:incoming?amount:-amount,date:"Today",icon:incoming?"↓":"•"};if(editing===null)data.tx.unshift(t);else data.tx[editing]=t;persist();showPage("activity")}
+function deleteTransaction(){if(editing!==null){data.tx.splice(editing,1);persist();showPage("activity")}}
+function resetDemo(){if(confirm("Reset all Harbour demo details and sample transactions?")){data=JSON.parse(JSON.stringify(defaults));persist();showPage("home")}}
+render();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>
